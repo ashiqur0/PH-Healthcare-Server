@@ -1,8 +1,19 @@
 import app from "./app";
+import dotenv from "dotenv";
 
-const port = 5000; // The port your express server will be running on.
+dotenv.config(); // Load environment variables from .env file
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+const port = process.env.PORT; // The port your express server will be running on.
+
+const bootstrap = async () => {
+    try {
+        app.listen(port, () => {
+            console.log(`Server is running on http://localhost:${port}`);
+        });
+    } catch (error) {
+        console.error("Error starting the server:", error);
+        process.exit(1);
+    }
+}
+
+bootstrap();
