@@ -1,8 +1,5 @@
 import app from "./app";
-import dotenv from "dotenv";
 import { envVars } from "./config/env";
-
-dotenv.config(); // Load environment variables from .env file
 
 const bootstrap = async () => {
     try {
