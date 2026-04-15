@@ -2,8 +2,6 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { ROLE, USER_STATUS } from "../../generated/prisma/enums";
-import ms from "ms";
-import { envVars } from "../../config/env";
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
@@ -49,11 +47,11 @@ export const auth = betterAuth({
     },
 
     session: {
-        expiresIn: Number(ms(Number(envVars.BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN))) || 0,
-        updateAge: Number(ms(Number(envVars.BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE))) || 0,
+        expiresIn: 1 * 24 * 60 * 60, // 1 day
+        updateAge: 1 * 24 * 60 * 60, // 1 day
         cookieCache: {
-            enabled: envVars.NODE_ENV === 'production',
-            maxAge: Number(ms(Number(envVars.BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN))) || 0
+            enabled: true,
+            maxAge: 1 * 24 * 60 * 60 // 1 day
         }
     }
 });
