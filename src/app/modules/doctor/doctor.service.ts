@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma"
+import { IUpdateDoctorPayload } from "./doctor.interface";
 
 const getAllDoctors = async () => {
     const doctors = await prisma.doctor.findMany({
@@ -31,7 +32,17 @@ const getDoctorById = async (id: string) => {
     return doctor;
 }
 
+const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
+    const updatedDoctor = await prisma.doctor.update({
+        where: { id },
+        data: payload
+    });
+
+    return updatedDoctor;
+}
+
 export const DoctorService = {
     getAllDoctors,
     getDoctorById,
+    updateDoctor,
 }
