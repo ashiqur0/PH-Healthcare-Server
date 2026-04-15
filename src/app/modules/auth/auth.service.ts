@@ -1,4 +1,6 @@
+import status from "http-status";
 import { USER_STATUS } from "../../../generated/prisma/enums";
+import AppError from "../../errorHelpers/appError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 
@@ -23,7 +25,8 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
     });
 
     if (!data.user) {
-        throw new Error('Failed to register patient');
+        // throw new Error('Failed to register patient');
+        throw new AppError(status.BAD_REQUEST, 'Failed to register patient');
     }
 
     //* TODO: create patient profile in transaction after sign up of patient in User model
@@ -71,11 +74,13 @@ const loginUser = async (payload: ILoginUserPayload) => {
     });
 
     if (data.user.status === USER_STATUS.BLOCKED) {
-        throw new Error('User is blocked. Please contact support.');
+        // throw new Error('User is blocked. Please contact support.');
+        throw new AppError(status.FORBIDDEN, 'User is blocked. Please contact support.');
     }
 
     if (data.user.isDeleted || data.user.status === USER_STATUS.DELETED) {
-        throw new Error('User is deleted. Please contact support.');
+        // throw new Error('User is deleted. Please contact support.');
+        throw new AppError(status.FORBIDDEN, 'User is deleted. Please contact support.');
     }
 
     return data;
