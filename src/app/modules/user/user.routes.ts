@@ -3,8 +3,8 @@ import { UserController } from "./user.controller";
 
 const router = Router();
 
-router.post('create-doctor', UserController.createDoctor);
-// router.post('create-admin', UserController.createAdmin);
-// router.post('create-super-admin', UserController.createSuperAdmin);
+router.post('/create-doctor', UserController.createDoctor);
+// router.post('/create-admin', UserController.createAdmin);
+// router.post('/create-super-admin', UserController.createSuperAdmin);
 
 export const UserRoutes = router;

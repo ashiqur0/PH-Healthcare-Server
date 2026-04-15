@@ -10,8 +10,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware to parse JSON bodies
 app.use(express.json());
-app.use(globalErrorHandler);
-app.use(notFound);
 
 // Routes
 app.use('/api/v1', IndexRoutes);
@@ -20,5 +18,8 @@ app.use('/api/v1', IndexRoutes);
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to the PH Health Care API!");
 });
+
+app.use(globalErrorHandler);
+app.use(notFound);
 
 export default app;

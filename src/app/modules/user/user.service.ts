@@ -125,6 +125,8 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
                 id: userData.user.id
             }
         });
+
+        throw error;
     }
 }
 

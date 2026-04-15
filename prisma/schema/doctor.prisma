@@ -9,13 +9,13 @@ model Doctor {
     isDeleted     Boolean   @default(false)
     deletedAt     DateTime?
 
-    registrationNumber  String? @unique
+    registrationNumber  String @unique
     experience          Int     @default(0)
     gender              GENDER
     appointmentFee      Float
-    qualification       String?
-    currentWorkingPlace String?
-    designation         String?
+    qualification       String
+    currentWorkingPlace String
+    designation         String
     averageRating       Float   @default(0.0)
 
     createdAt DateTime @default(now())
