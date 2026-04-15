@@ -6,7 +6,7 @@ import status from "http-status";
 import z, { unknown } from "zod";
 import { TErrorResponse, TErrorSource } from "../interface/error.interface";
 import { handleZodError } from "../errorHelpers/handleZodError";
-import AppError from "../errorHelpers/appError";
+import AppError from "../errorHelpers/AppError";
 
 // Global error handler
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {

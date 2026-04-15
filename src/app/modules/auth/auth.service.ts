@@ -1,8 +1,8 @@
 import status from "http-status";
 import { USER_STATUS } from "../../../generated/prisma/enums";
-import AppError from "../../errorHelpers/appError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
+import AppError from "../../errorHelpers/AppError";
 
 interface IRegisterPatientPayload {
     name: string;
