@@ -17,12 +17,18 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     let errorSources: TErrorSource[] = [];
     let statusCode: number = status.INTERNAL_SERVER_ERROR; // Default to 500
     let message: string = "Something went wrong!";
+    let stack: string | undefined = undefined;
 
-    if (err instanceof z.ZodError) {
+    if (err instanceof z.ZodError) {    // Zod validation error
         const simplifiedError = handleZodError(err);
         statusCode = simplifiedError.statusCode as number;
         message = simplifiedError.message;
         errorSources = [...simplifiedError.errorSources];
+        stack = err.stack;
+    } else if (err instanceof Error) {  //JS Native Error. Keep last 
+        statusCode = status.INTERNAL_SERVER_ERROR;
+        message = err.message;
+        stack = err.stack
     }
 
     const errorResponse: TErrorResponse = {
@@ -30,6 +36,7 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
         message,
         errorSources,
         error: envVars.NODE_ENV === 'development' ? err : undefined,
+        stack: envVars.NODE_ENV === 'development' ? stack : undefined
     }
 
     res.status(statusCode).json(errorResponse);
