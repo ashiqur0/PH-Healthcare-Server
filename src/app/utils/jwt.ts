@@ -13,7 +13,7 @@ const verifyToken = (token: string, secret: string) => {
         const decoded = jwt.verify(token, secret) as JwtPayload;
         return {
             success: true,
-            decoded
+            data: decoded
         };
     } catch (error: any) {
         return {
@@ -25,7 +25,7 @@ const verifyToken = (token: string, secret: string) => {
 }
 
 const decodeToken = (token: string) => {
-    const decoded = jwt.decode(token);
+    const decoded = jwt.decode(token) as JwtPayload;
     return decoded;
 }
 
