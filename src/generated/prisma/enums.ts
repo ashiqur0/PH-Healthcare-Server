@@ -34,3 +34,35 @@ export const GENDER = {
 } as const
 
 export type GENDER = (typeof GENDER)[keyof typeof GENDER]
+
+
+export const APPOINMENT_STATUS = {
+  SCHEDULED: 'SCHEDULED',
+  INPROGRESS: 'INPROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type APPOINMENT_STATUS = (typeof APPOINMENT_STATUS)[keyof typeof APPOINMENT_STATUS]
+
+
+export const BLOOD_GROUP = {
+  A_POSITIVE: 'A_POSITIVE',
+  A_NEGATIVE: 'A_NEGATIVE',
+  B_POSITIVE: 'B_POSITIVE',
+  B_NEGATIVE: 'B_NEGATIVE',
+  AB_POSITIVE: 'AB_POSITIVE',
+  AB_NEGATIVE: 'AB_NEGATIVE',
+  O_POSITIVE: 'O_POSITIVE',
+  O_NEGATIVE: 'O_NEGATIVE'
+} as const
+
+export type BLOOD_GROUP = (typeof BLOOD_GROUP)[keyof typeof BLOOD_GROUP]
+
+
+export const PAYMENT_STATUS = {
+  PAID: 'PAID',
+  UNPAID: 'UNPAID'
+} as const
+
+export type PAYMENT_STATUS = (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS]
