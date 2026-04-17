@@ -33,3 +33,8 @@ enum BLOOD_GROUP {
     O_POSITIVE
     O_NEGATIVE
 }
+
+enum PAYMENT_STATUS {
+    PAID
+    UNPAID
+}

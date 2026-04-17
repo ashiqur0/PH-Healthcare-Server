@@ -1,4 +1,4 @@
-model Appoinment {
+model Appointment {
     id             String            @id @default(uuid(7))
     videoCallingId String            @unique
     status         APPOINMENT_STATUS @default(SCHEDULED)
