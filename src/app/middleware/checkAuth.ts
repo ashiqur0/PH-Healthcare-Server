@@ -60,6 +60,12 @@ export const checkAuth = (...authRoles: ROLE[]) => {
                     if (authRoles.length > 0 && !authRoles.includes(user.role)) {
                         throw new AppError(status.FORBIDDEN, 'You do not have permission to access this resource');
                     }
+
+                    req.user = {
+                        userId: user.id,
+                        role: user.role,
+                        email: user.email
+                    }
                 }
 
                 const accessToken = CookieUtils.getCookie(req, 'accessToken');
