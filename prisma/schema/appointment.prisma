@@ -15,7 +15,7 @@ model Appointment {
     schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
 
     prescription Prescription?
-    review       Review?
+    reviews       Review?
     payment      Payment?
 
     @@index([patientId])
