@@ -49,6 +49,7 @@ const deleteAdmin = async (id: string, user: IRequestUser) => {
 
     //TODO: Validate who is deleting the admin, only super admin can delete an admin and super admin, and admin cannot delete a super admin
 
+    // validate self deleting
     const isAdminExist = await prisma.admin.findUnique({
         where: { id }
     });
