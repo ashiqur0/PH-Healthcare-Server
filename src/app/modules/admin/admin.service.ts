@@ -10,6 +10,18 @@ const getAllAdmins = async () => {
     return admins;
 }
 
+const getAdminById = async (id: string) => {
+    const admin = await prisma.admin.findUnique({
+        where: { id },
+        include: {
+            user: true
+        }
+    });
+
+    return admin;
+}
+
 export const AdminService = {
-    getAllAdmins
+    getAllAdmins,
+    getAdminById
 }
