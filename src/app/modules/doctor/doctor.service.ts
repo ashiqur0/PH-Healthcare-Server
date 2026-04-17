@@ -1,5 +1,7 @@
+import status from "http-status";
 import { prisma } from "../../lib/prisma"
 import { IUpdateDoctorPayload } from "./doctor.interface";
+import AppError from "../../errorHelpers/AppError";
 
 const getAllDoctors = async () => {
     const doctors = await prisma.doctor.findMany({
@@ -49,12 +51,58 @@ const getDoctorById = async (id: string) => {
 }
 
 const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
-    const updatedDoctor = await prisma.doctor.update({
-        where: { id },
-        data: payload
+    const isDoctorExist = await prisma.doctor.findUnique({
+        where: { id }
     });
 
-    return updatedDoctor;
+    if (!isDoctorExist) {
+        throw new AppError(status.NOT_FOUND, "Doctor not found");
+    }
+
+    const { doctor: doctorData, specialities } = payload;
+
+    await prisma.$transaction(async (tx) => {
+        if (doctorData) {
+            await tx.doctor.update({
+                where: { id },
+                data: { ...doctorData }
+            })
+        }
+
+        if (specialities && specialities.length > 0) {
+            for (const speciality of specialities) {
+                const { specialityId, shouldDelete } = speciality;
+                if (shouldDelete) {
+                    await tx.doctorSpeciality.delete({
+                        where: {
+                            doctorId_specialityId: {
+                                doctorId: id,
+                                specialityId
+                            }
+                        }
+                    });
+                } else {
+                    await tx.doctorSpeciality.upsert({
+                        where: {
+                            doctorId_specialityId: {
+                                doctorId: id,
+                                specialityId
+                            }
+                        },
+                        create: {
+                            doctorId: id,
+                            specialityId
+                        },
+                        update: {}
+                    });
+                }
+            }
+        }
+    });
+
+    const doctor = await getDoctorById(id);
+
+    return doctor;
 }
 
 const deleteDoctor = async (id: string) => {
