@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from "express";
 import { IndexRoutes } from "./app/routes";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
+import cookieParser from "cookie-parser";
 // import AppError from "./app/errorHelpers/appError";
 // import status from "http-status";
 
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.use('/api/v1', IndexRoutes);
