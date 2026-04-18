@@ -99,6 +99,12 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
 
     const result = await AuthService.changePassword(payload, betterAuthSessionToken);
 
+    const { accessToken, refreshToken, token } = result;
+    
+    tokenUtils.setAccessTokenCookie(res, accessToken);
+    tokenUtils.setRefreshTokenCookie(res, refreshToken);
+    tokenUtils.setBetterAuthSessionCookie(res, token as string);
+
     sendResponse(res, {
         httpStatusCode: status.OK,
         success: true,

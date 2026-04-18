@@ -47,6 +47,7 @@ export const auth = betterAuth({
         }
     },
 
+    // for Bearer token 
     plugins: [
         bearer()
     ],
