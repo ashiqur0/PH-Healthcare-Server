@@ -5,6 +5,9 @@ import { prisma } from "../../lib/prisma";
 import AppError from "../../errorHelpers/AppError";
 import { tokenUtils } from "../../utils/token";
 import { IRequestUser } from "../../interface/requestUser.interface";
+import { jwtUtils } from "../../utils/jwt";
+import { envVars } from "../../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 interface IRegisterPatientPayload {
     name: string;
@@ -165,8 +168,68 @@ const getMe = async (user: IRequestUser) => {
     return isUserExists;
 };
 
+const getNewToken = async (refreshToken: string, sessionToken: string) => {
+
+    const isSessionTokenExist = await prisma.session.findUnique({
+        where: {
+            token: sessionToken
+        },
+        include: {
+            user: true
+        }
+    });
+
+    if (!isSessionTokenExist) {
+        throw new AppError(status.UNAUTHORIZED, "Invalid session token");
+    }
+
+    const verifiedRefreshToken = jwtUtils.verifyToken(refreshToken, envVars.REFRESH_TOKEN_SECRET);
+
+    if (!verifiedRefreshToken.success && verifiedRefreshToken.error) {
+        throw new AppError(status.UNAUTHORIZED, "Invalid refresh token", verifiedRefreshToken.error);
+    }
+
+    const data = verifiedRefreshToken.data as JwtPayload;
+
+    const newAccessToken = tokenUtils.getAccessToken({
+        userId: data.userId,
+        role: data.role,
+        name: data.name,
+        status: data.status,
+        isDeleted: data.isDeleted,
+        emailVerified: data.emailVerified
+    });
+
+    const newRefreshToken = tokenUtils.getRefreshToken({
+        userId: data.userId,
+        role: data.role,
+        name: data.name,
+        status: data.status,
+        isDeleted: data.isDeleted,
+        emailVerified: data.emailVerified
+    });
+
+    const updatedSession = await prisma.session.update({
+        where: {
+            token: sessionToken
+        },
+        data: {
+            token: sessionToken,
+            expiresAt: new Date(Date.now() + 60 * 60 * 24 * 1000), // 24 hours
+            updatedAt: new Date()
+        }
+    });
+
+    return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        sessionToken: updatedSession.token
+    }
+}
+
 export const AuthService = {
     registerPatient,
     loginUser,
-    getMe
+    getMe,
+    getNewToken
 }
