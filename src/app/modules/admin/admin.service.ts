@@ -37,14 +37,14 @@ const updateAdmin = async (id: string, payload: IUpdateAdminPayload) => {
 
     const { admin } = payload;
     const updatedAdmin = await prisma.admin.update({
-        where: { id  },
+        where: { id },
         data: { ...admin }
     });
 
     return updatedAdmin;
 }
 
-    // soft delete admin by setting isDeleted to true
+// soft delete admin by setting isDeleted to true
 const deleteAdmin = async (id: string, user: IRequestUser) => {
 
     //TODO: Validate who is deleting the admin, only super admin can delete an admin and super admin, and admin cannot delete a super admin
