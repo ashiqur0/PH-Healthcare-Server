@@ -99,10 +99,6 @@ const loginUser = async (payload: ILoginUserPayload) => {
         throw new AppError(status.FORBIDDEN, 'User is deleted. Please contact support.');
     }
 
-    if (!data.user.emailVerified) {
-        throw new AppError(status.FORBIDDEN, 'Email is not verified. Please verify your email to login.');
-    }
-
     const accessToken = tokenUtils.getAccessToken({
         userId: data.user.id,
         role: data.user.role,

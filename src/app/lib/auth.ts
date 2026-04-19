@@ -12,7 +12,7 @@ export const auth = betterAuth({
 
     emailAndPassword: {
         enabled: true,
-        requiredEmailVerification: true
+        requireEmailVerification: true
     },
 
     emailVerification: {
