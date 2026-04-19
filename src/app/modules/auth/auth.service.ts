@@ -99,6 +99,10 @@ const loginUser = async (payload: ILoginUserPayload) => {
         throw new AppError(status.FORBIDDEN, 'User is deleted. Please contact support.');
     }
 
+    if (!data.user.emailVerified) {
+        throw new AppError(status.FORBIDDEN, 'Email is not verified. Please verify your email to login.');
+    }
+
     const accessToken = tokenUtils.getAccessToken({
         userId: data.user.id,
         role: data.user.role,
@@ -290,11 +294,30 @@ const logoutUser = async (sessionToken: string) => {
     return result;
 }
 
+const verifyEmail = async (email: string, otp: string) => {
+    const result = await auth.api.verifyEmailOTP({
+        body: {
+            email,
+            otp
+        }
+    });
+
+    if (result.status && !result.user.emailVerified) {
+        await prisma.user.update({
+            where: { email },
+            data: { 
+                emailVerified: true
+            }
+        });
+    }
+}
+
 export const AuthService = {
     registerPatient,
     loginUser,
     getMe,
     getNewToken,
     changePassword,
-    logoutUser
+    logoutUser,
+    verifyEmail,
 }
