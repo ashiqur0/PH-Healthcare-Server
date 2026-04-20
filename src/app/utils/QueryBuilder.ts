@@ -13,7 +13,7 @@ export class QueryBuilder<
     private skip: number = 0;
     private sortBy: string = "createdAt";
     private sortOrder: "asc" | "desc" = "asc";
-    private selectFields: Record<string, boolean | undefined>;
+    private selectFields: Record<string, boolean | undefined> = {};
 
     constructor(
         private model: PrismaModelDelegate,
@@ -207,7 +207,7 @@ export class QueryBuilder<
 
     sort(): this {
         const sortBy = this.queryParams.sortBy || 'createdAt';
-        const sortOrder = this.queryParams.sortOrder === "asc"? 'asc' : 'desc';
+        const sortOrder = this.queryParams.sortOrder === "asc" ? 'asc' : 'desc';
 
         this.sortBy = sortBy;
         this.sortOrder = sortOrder;
@@ -241,6 +241,28 @@ export class QueryBuilder<
             }
         }
 
+        return this;
+    }
+
+    fields(): this {
+        const fieldsParam = this.queryParams.fields;
+        // /doctors?fields=id, name, user => select { id: true, name: true, user: { select: { name: true }}}
+
+
+        // no nested fields selection for now, only direct fields like ?fields=name,email
+        if (fieldsParam && typeof fieldsParam === 'string') {
+            const filedsArray = fieldsParam?.split('.').map(field => field.trim());
+
+            filedsArray?.forEach((field) => {
+                if (this.selectFields) {
+                    this.selectFields[field] = true;
+                }
+            });
+
+            this.query.select = this.selectFields as Record<string, boolean | Record<string, unknown>>;
+
+            delete this.query.include;
+        }
         return this;
     }
 
