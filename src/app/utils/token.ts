@@ -1,6 +1,6 @@
 import { JwtPayload, SignOptions } from "jsonwebtoken";
 import { jwtUtils } from "./jwt";
-import { envVars } from "../../config/env";
+import { envVars } from "../config/env";
 import { Response } from "express";
 import { CookieUtils } from "./cookie";
 
@@ -19,6 +19,9 @@ const getRefreshToken = (payload: JwtPayload) => {
         envVars.REFRESH_TOKEN_SECRET,
         { expiresIn: envVars.REFRESH_TOKEN_EXPIRES_IN } as SignOptions
     );
+
+    console.log("Generated Refresh Token:", refreshToken); // Debug log to verify token generation
+    console.log("Refresh Token Payload:", payload); // Debug log to verify payload content
 
     return refreshToken;
 }

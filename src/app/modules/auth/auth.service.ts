@@ -6,7 +6,7 @@ import AppError from "../../errorHelpers/AppError";
 import { tokenUtils } from "../../utils/token";
 import { IRequestUser } from "../../interface/requestUser.interface";
 import { jwtUtils } from "../../utils/jwt";
-import { envVars } from "../../../config/env";
+import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 import { IChangePasswordPayload, ILoginUserPayload, IRegisterPatientPayload } from "./auth.interface";
 
@@ -308,6 +308,113 @@ const verifyEmail = async (email: string, otp: string) => {
     }
 }
 
+const forgetPassword = async (email: string) => {
+    const isUserExist = await prisma.user.findUnique({
+        where: { email }
+    });
+
+    if (!isUserExist) {
+        throw new AppError(status.NOT_FOUND, "User with this email does not exist");
+    }
+
+    if (!isUserExist.emailVerified) {
+        throw new AppError(status.BAD_REQUEST, "Email is not verified. Please verify your email first.");
+    }
+
+    if (isUserExist.isDeleted || isUserExist.status === USER_STATUS.DELETED) {
+        throw new AppError(status.BAD_REQUEST, "User account is deleted.");
+    }
+
+    // user will get an OTP
+    await auth.api.requestPasswordResetEmailOTP({
+        body: {
+            email
+        }
+    })
+}
+
+const resetPassword = async (email: string, otp: string, newPassword: string) => {
+    const isUserExist = await prisma.user.findUnique({
+        where: { email }
+    });
+
+    if (!isUserExist) {
+        throw new AppError(status.NOT_FOUND, "User with this email does not exist");
+    }
+
+    if (!isUserExist.emailVerified) {
+        throw new AppError(status.BAD_REQUEST, "Email is not verified. Please verify your email first.");
+    }
+
+    if (isUserExist.isDeleted || isUserExist.status === USER_STATUS.DELETED) {
+        throw new AppError(status.BAD_REQUEST, "User account is deleted.");
+    }
+
+    // change password
+    await auth.api.resetPasswordEmailOTP({
+        body: {
+            email,
+            otp,
+            password: newPassword
+        }
+    });
+
+    // 
+    if (isUserExist.needPasswordChange) {
+        await prisma.user.update({
+            where: {
+                id: isUserExist.id
+            },
+            data: {
+                needPasswordChange: false
+            }
+        })
+    }
+
+    // delete all sessions: means the other devices will be logged out
+    await prisma.session.deleteMany({
+        where: {
+            userId: isUserExist.id
+        }
+    })
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const googleLoginSuccess = async (session: Record<string, any>) => {
+    const isPatientExist = await prisma.patient.findUnique({
+        where: {
+            userId: session.user.id
+        }
+    });
+
+    if (!isPatientExist) {
+        await prisma.patient.create({
+            data: {
+                userId: session.user.id,
+                name: session.user.name,
+                email: session.user.email
+            }
+        })
+    }
+
+    const accessToken = tokenUtils.getAccessToken({
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name,
+    });
+
+    const refreshToken = tokenUtils.getRefreshToken({
+        userId: session.user.id,
+        role: session.user.role,
+        name: session.user.name
+    });
+
+    return {
+        accessToken, 
+        refreshToken
+    }
+}
+
 export const AuthService = {
     registerPatient,
     loginUser,
@@ -316,4 +423,7 @@ export const AuthService = {
     changePassword,
     logoutUser,
     verifyEmail,
+    forgetPassword,
+    resetPassword,
+    googleLoginSuccess,
 }
