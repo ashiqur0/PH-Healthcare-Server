@@ -266,6 +266,17 @@ export class QueryBuilder<
         return this;
     }
 
+    include(relation: TInclude): this {
+        if (this.selectFields) {
+            return this;
+        }
+
+        // if fields method is used, include method will be ignored to avoid conflict between select and include
+        this.query.include = { ...(this.query.include as Record<string, unknown>), ...(relation as Record<string, unknown>) };
+
+        return this;
+    }
+
     private parseFilterValue(value: unknown): unknown {
         if (value === 'true') return true;
         if (value === 'false') return false;
