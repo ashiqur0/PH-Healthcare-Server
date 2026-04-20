@@ -341,6 +341,10 @@ export class QueryBuilder<
         return await this.model.count(this.coundQuery as Parameters<typeof this.model.count>[0]);
     }
 
+    getQuery(): PrismaFindManyArgs {
+        return this.query;
+    }
+
     private deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
         const result =  { ...target };
 
