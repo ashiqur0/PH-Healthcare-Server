@@ -124,41 +124,62 @@ export class QueryBuilder<
 
             // doctor?user.name=ashiqur => { user: { name: ashiqur } }
             if (key.includes('.')) {
+
                 const parts = key.split('.');
+
+                if (filterableFields && !filterableFields.includes(key)) return;
+
                 if (parts.length === 2) {
                     const [relation, nestedField] = parts;
 
+                    if (!queryWhere[relation]) {
+                        queryWhere[relation] = {};
+                        countQueryWhere[relation] = {};
+                    }
+
                     queryWhere[relation] = {
-                        [nestedField]: value
+                        [nestedField]: this.parseFilterValue(value)
                     }
 
                     countQueryWhere[relation] = {
-                        [nestedField]: value
+                        [nestedField]: this.parseFilterValue(value)
                     }
+
+                    return;
                 } else if (parts.length === 3) {
                     const [relation, nestedRelation, nestedField] = parts;
 
+                    if (!queryWhere[relation]) {
+                        queryWhere[relation] = {};
+                        countQueryWhere[relation] = {};
+                    }
+
                     queryWhere[relation] = {
                         [nestedRelation]: {
-                            [nestedField]: value
+                            [nestedField]: this.parseFilterValue(value)
                         }
                     }
 
                     countQueryWhere[relation] = {
                         [nestedRelation]: {
-                            [nestedField]: value
+                            [nestedField]: this.parseFilterValue(value)
                         }
                     }
+
+                    return;
                 }
             } else {
                 // direct value when no dot notation is used
-                queryWhere[key] = value;
-                countQueryWhere[key] = value;
-            }
-
-            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
                 queryWhere[key] = this.parseFilterValue(value);
                 countQueryWhere[key] = this.parseFilterValue(value);
+                return;
+            }
+
+            // range filter parsing
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                queryWhere[key] = this.parseRangeFilter(value as Record<string, string | number>);
+                countQueryWhere[key] = this.parseRangeFilter(value as Record<string, string | number>);
+                
                 return;
             }
 
