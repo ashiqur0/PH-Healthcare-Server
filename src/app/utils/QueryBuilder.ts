@@ -309,6 +309,30 @@ export class QueryBuilder<
         return this;
     }
 
+    where(condition: TWhereInput): this {
+        this.query.where = this.deepMerge(this.query.where as Record<string, unknown>, condition as Record<string, unknown>);
+
+        this.coundQuery.where = this.deepMerge(this.coundQuery.where as Record<string, unknown>, condition as Record<string, unknown>);
+
+        return this;
+    }
+
+    private deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
+        const result =  { ...target };
+
+        for (const key in source) {
+            if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                if (result[key] && typeof result[key] === 'object' && !Array.isArray(result[key])) {
+                    result[key] = this.deepMerge(result[key] as Record<string, unknown>, source[key] as Record<string, unknown>);
+                } else {
+                    result[key] = source[key];
+                }
+            }
+        }
+
+        return result;
+    }
+
     private parseFilterValue(value: unknown): unknown {
         if (value === 'true') return true;
         if (value === 'false') return false;
