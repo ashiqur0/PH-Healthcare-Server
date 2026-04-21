@@ -5,7 +5,7 @@ import { DoctorScheduleController } from "./doctorSchedule.controller";
 
 const router = Router();
 
-router.post('/create-my-doctor-schedule', checkAuth(ROLE.DOCTOR), DoctorScheduleController.createDoctorSchedule);
+router.post('/create-my-doctor-schedule', checkAuth(ROLE.DOCTOR), DoctorScheduleController.createMyDoctorSchedule);
 
 router.get('/my-doctor-schedules', checkAuth(ROLE.DOCTOR), DoctorScheduleController.getMyDoctorSchedules);
 

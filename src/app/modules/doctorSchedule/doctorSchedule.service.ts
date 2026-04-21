@@ -6,7 +6,7 @@ import { QueryBuilder } from "../../utils/QueryBuilder";
 import { doctorScheduleFilterableFields, doctorScheduleIncludeConfig, doctorScheduleSearchableFields } from "./doctorSchedule.constant";
 import { ICreateDoctorSchedulePayload, IUpdateDoctorSchedulePayload } from "./doctorSchedule.interface";
 
-const createDoctorSchedule = async (user: IRequestUser, payload: ICreateDoctorSchedulePayload) => {
+const createMyDoctorSchedule = async (user: IRequestUser, payload: ICreateDoctorSchedulePayload) => {
     const doctorData = await prisma.doctor.findUniqueOrThrow({
         where: {
             email: user.email
@@ -143,10 +143,27 @@ const updateMyDoctorSchedule = async (user: IRequestUser, payload: IUpdateDoctor
     return result;
 }
 
+const deleteMyDoctorSchedule = async (user: IRequestUser, scheduleId: string) => {
+    const doctorData = await prisma.doctor.findUniqueOrThrow({
+        where: {
+            email: user.email
+        }
+    });
+
+    await prisma.doctorSchedules.deleteMany({
+        where: {
+            isBooked: false,
+            doctorId: doctorData.id,
+            scheduleId
+        }
+    });
+};
+
 export const DoctorScheduleService = {
-    createDoctorSchedule,
+    createMyDoctorSchedule,
     getMyDoctorSchedules,
     getAllDoctorSchedules,
     getDoctorScheduleById,
     updateMyDoctorSchedule,
+    deleteMyDoctorSchedule
 }

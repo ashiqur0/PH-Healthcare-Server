@@ -5,11 +5,11 @@ import sendResponse from "../../shared/sendResponse";
 import status from "http-status";
 import { IQueryParams } from "../../interface/query.interface";
 
-const createDoctorSchedule = catchAsync(async (req: Request, res: Response) => {
+const createMyDoctorSchedule = catchAsync(async (req: Request, res: Response) => {
     const user = req.user;
     const payload = req.body;
 
-    const result = await DoctorScheduleService.createDoctorSchedule(user, payload);
+    const result = await DoctorScheduleService.createMyDoctorSchedule(user, payload);
 
     sendResponse(res, {
         httpStatusCode: status.OK,
@@ -66,12 +66,25 @@ const updateMyDoctorSchedule = catchAsync(async (req: Request, res: Response) =>
         message: "Doctor schedule updated successfully",
         data: result
     });
-})
+});
+
+const deleteDoctorSchedule = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user;
+    const { id } = req.params;
+    await DoctorScheduleService.deleteMyDoctorSchedule(user, id as string);
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Doctor schedule deleted successfully",
+        data: null
+    });
+});
 
 export const DoctorScheduleController = {
-    createDoctorSchedule,
+    createMyDoctorSchedule,
     getMyDoctorSchedules,
     getAllDoctorSchedules,
     getDoctorScheduleById,
     updateMyDoctorSchedule,
+    deleteDoctorSchedule
 };
