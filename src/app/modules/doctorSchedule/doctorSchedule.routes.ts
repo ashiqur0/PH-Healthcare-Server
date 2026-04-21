@@ -13,7 +13,7 @@ router.get('/', checkAuth(ROLE.ADMIN, ROLE.SUPER_ADMIN), DoctorScheduleControlle
 
 router.get('/:doctorId/schedule/:scheduleId', checkAuth(ROLE.ADMIN, ROLE.SUPER_ADMIN), DoctorScheduleController.getDoctorScheduleById);
     
-router.put('/update-my-doctor-schedule', checkAuth(ROLE.DOCTOR), DoctorScheduleController.updateDoctorSchedule);
+router.put('/update-my-doctor-schedule', checkAuth(ROLE.DOCTOR), DoctorScheduleController.updateMyDoctorSchedule);
     
 router.delete('/delete-my-doctor-schedule/:id', checkAuth(ROLE.DOCTOR), DoctorScheduleController.deleteDoctorSchedule);
 
