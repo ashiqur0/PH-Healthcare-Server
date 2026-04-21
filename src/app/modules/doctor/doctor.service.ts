@@ -39,7 +39,7 @@ const getAllDoctors = async (query: IqueryParams) => {
         .where({ isDeleted: false })
         .include({
             user: true,
-            specialities: true,
+            // specialities: true,
             // specialities: {
             //     include: {
             //         speciality: true

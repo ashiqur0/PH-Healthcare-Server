@@ -7,18 +7,18 @@ export class QueryBuilder<
     TInclude = Record<string, unknown>,
 > {
     private query: PrismaFindManyArgs;
-    private coundQuery: PrismaCountArgs;
+    private countQuery: PrismaCountArgs;
     private page: number = 1;
     private limit: number = 10;
     private skip: number = 0;
     private sortBy: string = "createdAt";
     private sortOrder: "asc" | "desc" = "asc";
-    private selectFields: Record<string, boolean | undefined> = {};
+    private selectFields: Record<string, boolean> | undefined;
 
     constructor(
         private model: PrismaModelDelegate,
         private queryParams: IqueryParams,
-        private config: IQueryConfig
+        private config: IQueryConfig = {}
     ) {
         this.query = {
             where: {},
@@ -27,7 +27,7 @@ export class QueryBuilder<
             skip: 0,
             take: 10,
         };
-        this.coundQuery = {
+        this.countQuery = {
             where: {}
         }
     }
@@ -65,8 +65,10 @@ export class QueryBuilder<
 
                         return {
                             [relation]: {
-                                [nestedRelation]: {
-                                    [nestedField]: stringFilter
+                                some: {
+                                    [nestedRelation]: {
+                                        [nestedField]: stringFilter
+                                    }
                                 }
                             }
                         }
@@ -84,11 +86,11 @@ export class QueryBuilder<
                 }
             })
 
-            const whereCondition = this.query.where as PrismaWhereConditions;
-            whereCondition.OR = searchConditions;
+            const whereConditions = this.query.where as PrismaWhereConditions;
+            whereConditions.OR = searchConditions;
 
-            const CountWhereCondition = this.coundQuery.where as PrismaWhereConditions;
-            CountWhereCondition.OR = searchConditions;
+            const CountWhereConditions = this.countQuery.where as PrismaWhereConditions;
+            CountWhereConditions.OR = searchConditions;
         }
 
         return this;
@@ -99,7 +101,7 @@ export class QueryBuilder<
     filter(): this {
 
         const { filterableFields } = this.config;
-        const excludeFields = ['searchTerm', 'page', 'limit', 'sortBy', 'sortOrder', 'fields', 'includes'];
+        const excludeFields = ['searchTerm', 'page', 'limit', 'sortBy', 'sortOrder', 'fields', 'include'];
 
         const filterParams: Record<string, unknown> = {};
 
@@ -111,7 +113,7 @@ export class QueryBuilder<
         })
 
         const queryWhere = this.query.where as Record<string, unknown>;
-        const countQueryWhere = this.coundQuery.where as Record<string, unknown>;
+        const countQueryWhere = this.countQuery.where as Record<string, unknown>;
 
         Object.keys(filterParams).forEach((key) => {
             const value = filterParams[key];
@@ -119,8 +121,6 @@ export class QueryBuilder<
             if (value === undefined || value === '') return;
 
             const isAllowedField = !filterableFields || filterableFields.length === 0 || filterableFields.includes(key);
-
-            if (!isAllowedField) return;
 
             // doctor?user.name=ashiqur => { user: { name: ashiqur } }
             if (key.includes('.')) {
@@ -137,13 +137,11 @@ export class QueryBuilder<
                         countQueryWhere[relation] = {};
                     }
 
-                    queryWhere[relation] = {
-                        [nestedField]: this.parseFilterValue(value)
-                    }
+                    const queryRelation = queryWhere[relation] as Record<string, unknown>;
+                    const countRelation = countQueryWhere[relation] as Record<string, unknown>;
 
-                    countQueryWhere[relation] = {
-                        [nestedField]: this.parseFilterValue(value)
-                    }
+                    queryRelation[nestedField] = this.parseFilterValue(value);
+                    countRelation[nestedField] = this.parseFilterValue(value);
 
                     return;
                 } else if (parts.length === 3) {
@@ -154,26 +152,28 @@ export class QueryBuilder<
                         countQueryWhere[relation] = {};
                     }
 
-                    queryWhere[relation] = {
-                        [nestedRelation]: {
-                            [nestedField]: this.parseFilterValue(value)
-                        }
+                    const queryRelation = queryWhere[relation] as Record<string, unknown>;
+                    const countRelation = countQueryWhere[relation] as Record<string, unknown>;
+
+                    if (!queryRelation[nestedField]) {
+                        queryRelation[nestedRelation] = {};
                     }
 
-                    countQueryWhere[relation] = {
-                        [nestedRelation]: {
-                            [nestedField]: this.parseFilterValue(value)
-                        }
+                    if (!countRelation[nestedRelation]) {
+                        countRelation[nestedRelation] = {};
                     }
+
+                    const queryNestedRelation = queryRelation[nestedRelation] as Record<string, unknown>;
+                    const countNestedRelation = countRelation[nestedRelation] as Record<string, unknown>;
+
+                    queryNestedRelation[nestedField] = this.parseFilterValue(value);
+                    countNestedRelation[nestedField] = this.parseFilterValue(value);
 
                     return;
                 }
-            } else {
-                // direct value when no dot notation is used
-                queryWhere[key] = this.parseFilterValue(value);
-                countQueryWhere[key] = this.parseFilterValue(value);
-                return;
             }
+
+            if (!isAllowedField) return;
 
             // range filter parsing
             if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
@@ -183,6 +183,7 @@ export class QueryBuilder<
                 return;
             }
 
+            // direct value parsing
             queryWhere[key] = this.parseFilterValue(value);
             countQueryWhere[key] = this.parseFilterValue(value);
         })
@@ -239,6 +240,10 @@ export class QueryBuilder<
                     [sortBy]: sortOrder
                 }
             }
+        } else {
+            this.query.orderBy = {
+                [sortBy]: sortOrder
+            }
         }
 
         return this;
@@ -292,7 +297,7 @@ export class QueryBuilder<
             }
         });
 
-        const includeParams = this.queryParams.includes as string | undefined;
+        const includeParams = this.queryParams.include as string | undefined;
 
         if (includeParams && typeof includeParams === 'string') {
             const requestedRelations = includeParams.split(',').map((relation) => relation.trim())
@@ -312,21 +317,20 @@ export class QueryBuilder<
     where(condition: TWhereInput): this {
         this.query.where = this.deepMerge(this.query.where as Record<string, unknown>, condition as Record<string, unknown>);
 
-        this.coundQuery.where = this.deepMerge(this.coundQuery.where as Record<string, unknown>, condition as Record<string, unknown>);
+        this.countQuery.where = this.deepMerge(this.countQuery.where as Record<string, unknown>, condition as Record<string, unknown>);
 
         return this;
     }
 
     async execute(): Promise<IQueryResult<T>> {
         const [total, data] = await Promise.all([
-            this.model.count(this.coundQuery as Parameters<typeof this.model.count>[0]),
-
+            this.model.count(this.countQuery as Parameters<typeof this.model.count>[0]),
             this.model.findMany(this.query as Parameters<typeof this.model.findMany>[0])
         ]);
 
         const totalPages = Math.ceil(total / this.limit);
 
-        return { 
+        return {
             data: data as T[],
             meta: {
                 page: this.page,
@@ -338,7 +342,7 @@ export class QueryBuilder<
     }
 
     async count(): Promise<number> {
-        return await this.model.count(this.coundQuery as Parameters<typeof this.model.count>[0]);
+        return await this.model.count(this.countQuery as Parameters<typeof this.model.count>[0]);
     }
 
     getQuery(): PrismaFindManyArgs {
@@ -346,7 +350,7 @@ export class QueryBuilder<
     }
 
     private deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
-        const result =  { ...target };
+        const result = { ...target };
 
         for (const key in source) {
             if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
@@ -355,6 +359,8 @@ export class QueryBuilder<
                 } else {
                     result[key] = source[key];
                 }
+            } else {
+                result[key] = source[key];
             }
         }
 

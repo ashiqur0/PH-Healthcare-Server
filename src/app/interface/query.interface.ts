@@ -49,13 +49,13 @@ export interface PrismaStringFilter {
     startsWith?: string;
     endsWith?: string;
     mode?: 'insensitive' | 'default';
+    equals?: string;
     in?: string[];
     notIn?: string[];
     lt?: string;
     lte?: string;
     gt?: string;
     gte?: string;
-    equals?: string;
     not?: PrismaStringFilter | string;
 }
 

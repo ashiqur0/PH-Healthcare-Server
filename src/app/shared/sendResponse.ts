@@ -14,12 +14,11 @@ interface IResponseData<T> {
 }
 
 const sendResponse = <T>(res: Response, responseData: IResponseData<T>) => {
-    const { httpStatusCode, success, message, data, meta } = responseData;
+    const { httpStatusCode, success, message, data } = responseData;
     res.status(httpStatusCode).json({
         success,
         message,
-        data: data || null,
-        meta: meta || null
+        data: data || null
     });
 }
 
