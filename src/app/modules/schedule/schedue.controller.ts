@@ -38,7 +38,9 @@ const getScheduleById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateSchedule = catchAsync(async (req: Request, res: Response) => {
-    const schedule = ScheduleService.updateSchedule();
+    const  { id } = req.params;
+    const payload = req.body;
+    const schedule = ScheduleService.updateSchedule(id as string, payload);
     sendResponse(res, {
         httpStatusCode: 200,
         success: true,
