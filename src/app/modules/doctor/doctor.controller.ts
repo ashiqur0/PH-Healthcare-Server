@@ -9,7 +9,7 @@ const getAllDoctors = catchAsync(async (req: Request, res: Response) => {
     const query = req.query
 
     const doctors = await DoctorService.getAllDoctors(query as IqueryParams);
-    
+
     sendResponse(res, {
         httpStatusCode: status.OK,
         success: true,
@@ -39,7 +39,7 @@ const updateDoctor = catchAsync(async (req: Request, res: Response) => {
         httpStatusCode: status.OK,
         success: true,
         message: "Doctor updated successfully",
-        data: updatedDoctor
+        data: updatedDoctor,
     });
 });
 
