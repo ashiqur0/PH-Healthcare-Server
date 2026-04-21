@@ -16,7 +16,6 @@ export const doctorIncludeConfig: Partial<Record<keyof Prisma.DoctorInclude, Pri
         include: {
             patient: true,
             doctor: true,
-            prescription: true
         }
     },
     doctorSchedules: {

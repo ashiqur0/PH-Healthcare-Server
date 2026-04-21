@@ -256,7 +256,8 @@ export class QueryBuilder<
 
         // no nested fields selection for now, only direct fields like ?fields=name,email
         if (fieldsParam && typeof fieldsParam === 'string') {
-            const filedsArray = fieldsParam?.split('.').map(field => field.trim());
+            const filedsArray = fieldsParam?.split(',').map(field => field.trim());
+            this.selectFields = {};
 
             filedsArray?.forEach((field) => {
                 if (this.selectFields) {

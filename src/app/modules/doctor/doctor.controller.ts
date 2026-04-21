@@ -3,12 +3,12 @@ import catchAsync from "../../shared/catchAsync";
 import { DoctorService } from "./doctor.service";
 import sendResponse from "../../shared/sendResponse";
 import status from "http-status";
-import { IqueryParams } from "../../interface/query.interface";
+import { IQueryParams } from "../../interface/query.interface";
 
 const getAllDoctors = catchAsync(async (req: Request, res: Response) => {
     const query = req.query
 
-    const doctors = await DoctorService.getAllDoctors(query as IqueryParams);
+    const doctors = await DoctorService.getAllDoctors(query as IQueryParams);
 
     sendResponse(res, {
         httpStatusCode: status.OK,
@@ -17,7 +17,7 @@ const getAllDoctors = catchAsync(async (req: Request, res: Response) => {
         data: doctors
     });
 });
-
+ 
 const getDoctorById = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
     const doctor = await DoctorService.getDoctorById(id as string);

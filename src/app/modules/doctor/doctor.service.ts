@@ -3,11 +3,11 @@ import { prisma } from "../../lib/prisma"
 import { IUpdateDoctorPayload } from "./doctor.interface";
 import AppError from "../../errorHelpers/AppError";
 import { QueryBuilder } from "../../utils/QueryBuilder";
-import { IqueryParams } from "../../interface/query.interface";
+import { IQueryParams } from "../../interface/query.interface";
 import { doctorFilterableFields, doctorIncludeConfig, doctorSearchableFields } from "./doctor.constant";
 import { Doctor, Prisma } from "../../../generated/prisma/client";
 
-const getAllDoctors = async (query: IqueryParams) => {
+const getAllDoctors = async (query: IQueryParams) => {
     // const doctors = await prisma.doctor.findMany({
     //     where: {
     //         isDeleted: false
@@ -40,15 +40,16 @@ const getAllDoctors = async (query: IqueryParams) => {
         .include({
             user: true,
             // specialities: true,
-            // specialities: {
-            //     include: {
-            //         speciality: true
-            //     }            
-            // }
+            specialities: {
+                include: {
+                    speciality: true
+                }            
+            }
         })
         .dynamicInclude(doctorIncludeConfig)
         .paginate()
         .sort()
+        .fields()
         .execute();
 
     return result;

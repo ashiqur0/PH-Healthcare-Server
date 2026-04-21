@@ -28,10 +28,10 @@ export interface PrismaModelDelegate {
     count(args?: any): Promise<number>;
 }
 
-export interface IqueryParams {
+export interface IQueryParams {
     searchTerm?: string;
     page?: string;
-    limit?: string;
+    limit?: string; 
     sortBy?: string;
     sortOrder?: "asc" | "desc";
     fields?: string;
