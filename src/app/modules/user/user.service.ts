@@ -1,5 +1,5 @@
 import status from "http-status";
-import { ROLE, Speciality } from "../../../generated/prisma/client";
+import { ROLE, specialty } from "../../../generated/prisma/client";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 import { ICreateDoctorPayload } from "./user.interface";
@@ -7,21 +7,21 @@ import AppError from "../../errorHelpers/AppError";
 
 const createDoctor = async (payload: ICreateDoctorPayload) => {
 
-    const specialities: Speciality[] = [];
+    const specialties: specialty[] = [];
 
-    for (const specialityId of payload.specialities) {
-        const speciality = await prisma.speciality.findUnique({
+    for (const specialtyId of payload.specialties) {
+        const specialty = await prisma.specialty.findUnique({
             where: {
-                id: specialityId
+                id: specialtyId
             }
         });
 
-        if (!speciality) {
-            // throw new Error(`Speciality with ID ${specialityId} not found`);
-            throw new AppError(status.NOT_FOUND, `Speciality with ID ${specialityId} not found`);
+        if (!specialty) {
+            // throw new Error(`specialty with ID ${specialtyId} not found`);
+            throw new AppError(status.NOT_FOUND, `specialty with ID ${specialtyId} not found`);
         }
 
-        specialities.push(speciality);
+        specialties.push(specialty);
     }
 
     // check if user with the same email already exists
@@ -47,7 +47,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
         }
     });
 
-    // transaction to create doctor and link specialities
+    // transaction to create doctor and link specialties
     try {
         const result = await prisma.$transaction(async (tx) => {
             const doctorData = await tx.doctor.create({
@@ -57,15 +57,15 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
                 }
             });
 
-            const doctorSpecialityData = specialities.map((speciality) => {
+            const doctorspecialtyData = specialties.map((specialty) => {
                 return {
                     doctorId: doctorData.id,
-                    specialityId: speciality.id
+                    specialtyId: specialty.id
                 }
             });
 
-            await tx.doctorSpeciality.createMany({
-                data: doctorSpecialityData
+            await tx.doctorspecialty.createMany({
+                data: doctorspecialtyData
             });
 
             const doctor = await tx.doctor.findUnique({
@@ -104,9 +104,9 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
                             updatedAt: true
                         }
                     },
-                    specialities: {
+                    specialties: {
                         select: {
-                            speciality: {
+                            specialty: {
                                 select: {
                                     title: true,
                                     id: true

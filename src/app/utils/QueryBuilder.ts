@@ -96,8 +96,8 @@ export class QueryBuilder<
         return this;
     }
 
-    // /doctors?searchTerm=ashiqur&page=1&sortBy=name&orderBy=asc&speciality=cardiology&appointmentFee[lt]=100 => {}
-    // { speciality: cardiology, appointmentFee: { lt: 100 } }
+    // /doctors?searchTerm=ashiqur&page=1&sortBy=name&orderBy=asc&specialty=cardiology&appointmentFee[lt]=100 => {}
+    // { specialty: cardiology, appointmentFee: { lt: 100 } }
     filter(): this {
 
         const { filterableFields } = this.config;

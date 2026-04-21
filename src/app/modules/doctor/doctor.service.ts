@@ -14,9 +14,9 @@ const getAllDoctors = async (query: IQueryParams) => {
     //     },
     //     include: {
     //         user: true,
-    //         specialities: {
+    //         specialties: {
     //             include: {
-    //                 speciality: true
+    //                 specialty: true
     //             }
     //         }
     //     }
@@ -39,10 +39,10 @@ const getAllDoctors = async (query: IQueryParams) => {
         .where({ isDeleted: false })
         .include({
             user: true,
-            // specialities: true,
-            specialities: {
+            // specialties: true,
+            specialties: {
                 include: {
-                    speciality: true
+                    specialty: true
                 }            
             }
         })
@@ -63,9 +63,9 @@ const getDoctorById = async (id: string) => {
         },
         include: {
             user: true,
-            specialities: {
+            specialties: {
                 include: {
-                    speciality: true
+                    specialty: true
                 }
             },
             appointments: {
@@ -96,7 +96,7 @@ const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
         throw new AppError(status.NOT_FOUND, "Doctor not found");
     }
 
-    const { doctor: doctorData, specialities } = payload;
+    const { doctor: doctorData, specialties } = payload;
 
     await prisma.$transaction(async (tx) => {
         if (doctorData) {
@@ -106,29 +106,29 @@ const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
             })
         }
 
-        if (specialities && specialities.length > 0) {
-            for (const speciality of specialities) {
-                const { specialityId, shouldDelete } = speciality;
+        if (specialties && specialties.length > 0) {
+            for (const specialty of specialties) {
+                const { specialtyId, shouldDelete } = specialty;
                 if (shouldDelete) {
-                    await tx.doctorSpeciality.delete({
+                    await tx.doctorspecialty.delete({
                         where: {
-                            doctorId_specialityId: {
+                            doctorId_specialtyId: {
                                 doctorId: id,
-                                specialityId
+                                specialtyId
                             }
                         }
                     });
                 } else {
-                    await tx.doctorSpeciality.upsert({
+                    await tx.doctorspecialty.upsert({
                         where: {
-                            doctorId_specialityId: {
+                            doctorId_specialtyId: {
                                 doctorId: id,
-                                specialityId
+                                specialtyId
                             }
                         },
                         create: {
                             doctorId: id,
-                            specialityId
+                            specialtyId
                         },
                         update: {}
                     });

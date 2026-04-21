@@ -66,8 +66,8 @@ export const ModelName = {
   Review: 'Review',
   Schedule: 'Schedule',
   DoctorSchedules: 'DoctorSchedules',
-  Speciality: 'Speciality',
-  DoctorSpeciality: 'DoctorSpeciality'
+  specialty: 'specialty',
+  Doctorspecialty: 'Doctorspecialty'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -302,10 +302,8 @@ export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof 
 
 export const ScheduleScalarFieldEnum = {
   id: 'id',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  startTime: 'startTime',
-  endTime: 'endTime',
+  startDateTime: 'startDateTime',
+  endDateTime: 'endDateTime',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -324,7 +322,7 @@ export const DoctorSchedulesScalarFieldEnum = {
 export type DoctorSchedulesScalarFieldEnum = (typeof DoctorSchedulesScalarFieldEnum)[keyof typeof DoctorSchedulesScalarFieldEnum]
 
 
-export const SpecialityScalarFieldEnum = {
+export const SpecialtyScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
@@ -335,16 +333,16 @@ export const SpecialityScalarFieldEnum = {
   deletedAt: 'deletedAt'
 } as const
 
-export type SpecialityScalarFieldEnum = (typeof SpecialityScalarFieldEnum)[keyof typeof SpecialityScalarFieldEnum]
+export type SpecialtyScalarFieldEnum = (typeof SpecialtyScalarFieldEnum)[keyof typeof SpecialtyScalarFieldEnum]
 
 
-export const DoctorSpecialityScalarFieldEnum = {
+export const DoctorspecialtyScalarFieldEnum = {
   id: 'id',
   doctorId: 'doctorId',
-  specialityId: 'specialityId'
+  specialtyId: 'specialtyId'
 } as const
 
-export type DoctorSpecialityScalarFieldEnum = (typeof DoctorSpecialityScalarFieldEnum)[keyof typeof DoctorSpecialityScalarFieldEnum]
+export type DoctorspecialtyScalarFieldEnum = (typeof DoctorspecialtyScalarFieldEnum)[keyof typeof DoctorspecialtyScalarFieldEnum]
 
 
 export const SortOrder = {
