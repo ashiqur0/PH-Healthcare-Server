@@ -16,5 +16,5 @@ export interface ICreateDoctorPayload {
         currentWorkingPlace: string;
         designation: string;
     },
-    specialities: string[]
+    specialties: string[]
 }

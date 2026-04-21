@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/sendResponse";
 import { ScheduleService } from "./schedule.service";
+import { IQueryParams } from "../../interface/query.interface";
 
 const createSchedule = catchAsync(async (req: Request, res: Response) => {
     const payload = req.body;
@@ -15,7 +16,8 @@ const createSchedule = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllSchedules = catchAsync(async (req: Request, res: Response) => {
-    const schedules = ScheduleService.getAllSchedules();
+    const query = req.query;
+    const schedules = ScheduleService.getAllSchedules(query as IQueryParams);
     sendResponse(res, {
         httpStatusCode: 200,
         success: true,

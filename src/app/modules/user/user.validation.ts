@@ -28,5 +28,5 @@ export const createDoctorZodSchema = z.object({
         designation: z.string("Designation is required").min(2, "Designation must be atleast 2 characters").max(50, "Designation must be less than 50 characters"),
     }),
 
-    specialities: z.array(z.uuid("Speciality ID must be a valid UUID")).min(1, "At least one speciality is required")
+    specialties: z.array(z.uuid("specialty ID must be a valid UUID")).min(1, "At least one specialty is required")
 });
