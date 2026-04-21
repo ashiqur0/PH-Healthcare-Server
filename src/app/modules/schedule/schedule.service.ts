@@ -92,7 +92,15 @@ const getAllSchedules = async (query: IQueryParams) => {
     return result;
 }
 
-const getScheduleById = async () => { }
+const getScheduleById = async (id: string) => {
+    const schedule = await prisma.schedule.findUnique({
+        where: {
+            id
+        }
+    });
+
+    return schedule;
+}
 
 const updateSchedule = async () => { }
 

@@ -27,7 +27,8 @@ const getAllSchedules = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getScheduleById = catchAsync(async (req: Request, res: Response) => {
-    const schedule = ScheduleService.getScheduleById();
+    const { id } = req.params;
+    const schedule = ScheduleService.getScheduleById(id as string);
     sendResponse(res, {
         httpStatusCode: 200,
         success: true,
