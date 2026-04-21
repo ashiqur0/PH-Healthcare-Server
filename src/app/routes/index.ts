@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { specialtyRoutes } from "../modules/specialty/specialty.routes";
 import { authRoutes } from "../modules/auth/auth.routes";
+import { specialtyRoutes } from "../modules/specialty/speciality.routes";
 import { UserRoutes } from "../modules/user/user.routes";
 import { DoctorRoutes } from "../modules/doctor/doctor.routes";
 import { AdminRoutes } from "../modules/admin/admin.routes";
@@ -13,6 +13,6 @@ router.use('/specialties', specialtyRoutes);
 router.use('/users', UserRoutes);
 router.use('/doctors', DoctorRoutes);
 router.use('/admins', AdminRoutes);
-router.use('/shcedule', ScheduleRoutes);
+router.use('/schedules', ScheduleRoutes);
 
 export const IndexRoutes = router;
