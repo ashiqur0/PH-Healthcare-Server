@@ -137,7 +137,15 @@ const updateSchedule = async (id: string, payload: IUpdateSchedulePayload) => {
     return updatedSchedule;
 }
 
-const deleteSchedule = async () => { }
+const deleteSchedule = async (id: string) => {
+    const deletedSchedule = await prisma.schedule.delete({
+        where: {
+            id
+        }
+    });
+    
+    return deletedSchedule;
+}
 
 
 export const ScheduleService = {

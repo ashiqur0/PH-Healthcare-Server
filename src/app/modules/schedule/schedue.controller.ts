@@ -50,7 +50,8 @@ const updateSchedule = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteSchedule = catchAsync(async (req: Request, res: Response) => {
-    const schedule = ScheduleService.deleteSchedule();
+    const { id } = req.params;
+    const schedule = ScheduleService.deleteSchedule(id as string);
     sendResponse(res, {
         httpStatusCode: 200,
         success: true,
