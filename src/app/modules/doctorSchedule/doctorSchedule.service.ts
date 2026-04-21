@@ -78,18 +78,36 @@ const getAllDoctorSchedules = async (query: IQueryParams) => {
     })
 
     const result = await queryBuilder
-    .search()
-    .filter()
-    .paginate()
-    .dynamicInclude(doctorScheduleIncludeConfig)
-    .sort()
-    .execute();
+        .search()
+        .filter()
+        .paginate()
+        .dynamicInclude(doctorScheduleIncludeConfig)
+        .sort()
+        .execute();
 
     return result;
+}
+
+const getDoctorScheduleById = async (id: string) => {
+    const doctorSchedule = await prisma.doctorSchedules.findUnique({
+        where: {
+            doctorId_scheduleId: {
+                doctorId: id,
+                scheduleId: id
+            }
+        },
+        include: {
+            schedule: true,
+            doctor: true
+        }
+    });
+
+    return doctorSchedule;
 }
 
 export const DoctorScheduleService = {
     createDoctorSchedule,
     getMyDoctorSchedules,
-    getAllDoctorSchedules
+    getAllDoctorSchedules,
+    getDoctorScheduleById
 }
