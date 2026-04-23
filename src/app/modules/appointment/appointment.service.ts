@@ -136,8 +136,55 @@ const changeAppointmentStatus = async (appointmentId: string, appointmentStatus:
     return result;
 }
 
+const getMySingleAppointment = async (appointmentId: string, user: IRequestUser) => {
+    const patientData = await prisma.patient.findUnique({
+        where: {
+            email: user?.email
+        }
+    });
+
+    const doctorData = await prisma.doctor.findUnique({
+        where: {
+            email: user?.email
+        }
+    });
+
+    let appointment;
+
+    if (patientData) {
+        appointment = await prisma.appointment.findFirst({
+            where: {
+                id: appointmentId,
+                patientId: patientData.id
+            },
+            include: {
+                doctor: true,
+                schedule: true
+            }
+        });
+    } else if (doctorData) {
+        appointment = await prisma.appointment.findFirst({
+            where: {
+                id: appointmentId,
+                doctorId: doctorData.id
+            },
+            include: {
+                patient: true,
+                schedule: true
+            }
+        });
+    }
+
+    if (!appointment) {
+        throw new AppError(status.BAD_REQUEST, 'This is not your appointment');
+    }
+
+    return appointment;
+}
+
 export const AppointmentService = {
     bookAppointment,
     getMyAppointments,
     changeAppointmentStatus,
+    getMySingleAppointment,
 }
