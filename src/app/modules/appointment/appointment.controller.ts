@@ -16,6 +16,18 @@ const bookAppointment = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
+const getMyAppointments = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user;
+    const result = await AppointmentService.getMyAppointments(user);
+    sendResponse(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: 'Appointments retrieved successfully',
+        data: result
+    })
+});
+
 export const AppointmentController = {
     bookAppointment,
+    getMyAppointments,
 }

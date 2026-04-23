@@ -148,6 +148,18 @@ export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
+export type UuidFilter<$PrismaModel = never> = {
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  notIn?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  mode?: Prisma.QueryMode
+  not?: Prisma.NestedUuidFilter<$PrismaModel> | string
+}
+
 export type EnumAPPOINMENT_STATUSFilter<$PrismaModel = never> = {
   equals?: $Enums.APPOINMENT_STATUS | Prisma.EnumAPPOINMENT_STATUSFieldRefInput<$PrismaModel>
   in?: $Enums.APPOINMENT_STATUS[] | Prisma.ListEnumAPPOINMENT_STATUSFieldRefInput<$PrismaModel>
@@ -160,6 +172,21 @@ export type EnumPAYMENT_STATUSFilter<$PrismaModel = never> = {
   in?: $Enums.PAYMENT_STATUS[] | Prisma.ListEnumPAYMENT_STATUSFieldRefInput<$PrismaModel>
   notIn?: $Enums.PAYMENT_STATUS[] | Prisma.ListEnumPAYMENT_STATUSFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumPAYMENT_STATUSFilter<$PrismaModel> | $Enums.PAYMENT_STATUS
+}
+
+export type UuidWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  notIn?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  mode?: Prisma.QueryMode
+  not?: Prisma.NestedUuidWithAggregatesFilter<$PrismaModel> | string
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedStringFilter<$PrismaModel>
+  _max?: Prisma.NestedStringFilter<$PrismaModel>
 }
 
 export type EnumAPPOINMENT_STATUSWithAggregatesFilter<$PrismaModel = never> = {
@@ -502,6 +529,17 @@ export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
+export type NestedUuidFilter<$PrismaModel = never> = {
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  notIn?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedUuidFilter<$PrismaModel> | string
+}
+
 export type NestedEnumAPPOINMENT_STATUSFilter<$PrismaModel = never> = {
   equals?: $Enums.APPOINMENT_STATUS | Prisma.EnumAPPOINMENT_STATUSFieldRefInput<$PrismaModel>
   in?: $Enums.APPOINMENT_STATUS[] | Prisma.ListEnumAPPOINMENT_STATUSFieldRefInput<$PrismaModel>
@@ -514,6 +552,20 @@ export type NestedEnumPAYMENT_STATUSFilter<$PrismaModel = never> = {
   in?: $Enums.PAYMENT_STATUS[] | Prisma.ListEnumPAYMENT_STATUSFieldRefInput<$PrismaModel>
   notIn?: $Enums.PAYMENT_STATUS[] | Prisma.ListEnumPAYMENT_STATUSFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumPAYMENT_STATUSFilter<$PrismaModel> | $Enums.PAYMENT_STATUS
+}
+
+export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  notIn?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedUuidWithAggregatesFilter<$PrismaModel> | string
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedStringFilter<$PrismaModel>
+  _max?: Prisma.NestedStringFilter<$PrismaModel>
 }
 
 export type NestedEnumAPPOINMENT_STATUSWithAggregatesFilter<$PrismaModel = never> = {

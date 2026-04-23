@@ -57,11 +57,56 @@ const bookAppointment = async (payload: IBookAppointmentPayload, user: IRequestU
         });
 
         // TODO: payment integration will be here
+
+        return appointmetData;
     });
 
     return result;
 }
 
+const getMyAppointments = async (user: IRequestUser) => {
+    const patientData = await prisma.patient.findUnique({
+        where: {
+            email: user?.email
+        }
+    });
+
+    const doctorData = await prisma.doctor.findUnique({
+        where: {
+            email: user?.email
+        }
+    });
+
+    let appointments = [];
+
+    if (patientData) {
+        appointments = await prisma.appointment.findMany({
+            where: {
+                patientId: patientData.id
+            },
+            include: {
+                doctor: true,
+                schedule: true
+            }
+        });
+    } else if (doctorData) {
+        appointments = await prisma.appointment.findMany({
+            where: {
+                doctorId: doctorData.id
+            },
+            include: {
+                patient: true,
+                schedule: true
+            }
+        });
+    } else {
+        throw new Error("User not found");
+    }
+
+    return appointments;
+}
+
 export const AppointmentService = {
     bookAppointment,
+    getMyAppointments,
 }
