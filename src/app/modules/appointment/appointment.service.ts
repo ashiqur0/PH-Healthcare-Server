@@ -109,6 +109,10 @@ const getMyAppointments = async (user: IRequestUser) => {
     return appointments;
 }
 
+// 1. Completed Or Cancelled Appointments should not be allowed to update status
+// 2. Doctors can only update Appoinment status from schedule to inprogress or inprogress to complted or schedule to cancelled.
+// 3. Patients can only cancel the scheduled appointment if it scheduled not completed or cancelled or inprogress. 
+// 4. Admin and Super admin can update to any status.
 const changeAppointmentStatus = async (appointmentId: string, appointmentStatus: APPOINMENT_STATUS, user: IRequestUser) => {
     const appointmentData = await prisma.appointment.findUniqueOrThrow({
         where: {
@@ -136,6 +140,7 @@ const changeAppointmentStatus = async (appointmentId: string, appointmentStatus:
     return result;
 }
 
+// refactoring on include of doctor and patient data in appointment details, we can use query builder to get the data in single query instead of multiple queries in case of doctor and patient both
 const getMySingleAppointment = async (appointmentId: string, user: IRequestUser) => {
     const patientData = await prisma.patient.findUnique({
         where: {
@@ -182,6 +187,7 @@ const getMySingleAppointment = async (appointmentId: string, user: IRequestUser)
     return appointment;
 }
 
+// integrate query builder
 const getAllAppointments = async () => {
     const appointments = await prisma.appointment.findMany({
         include: {
