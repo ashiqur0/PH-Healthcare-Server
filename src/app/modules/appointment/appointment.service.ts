@@ -2,6 +2,9 @@ import { uuidv7 } from "zod";
 import { IRequestUser } from "../../interface/requestUser.interface"
 import { prisma } from "../../lib/prisma"
 import { IBookAppointmentPayload } from "./appointment.interface"
+import { APPOINMENT_STATUS, Appointment, ROLE } from "../../../generated/prisma/client";
+import AppError from "../../errorHelpers/AppError";
+import status from "http-status";
 
 const bookAppointment = async (payload: IBookAppointmentPayload, user: IRequestUser) => {
     const patientData = await prisma.patient.findUniqueOrThrow({
@@ -106,7 +109,35 @@ const getMyAppointments = async (user: IRequestUser) => {
     return appointments;
 }
 
+const changeAppointmentStatus = async (appointmentId: string, appointmentStatus: APPOINMENT_STATUS, user: IRequestUser) => {
+    const appointmentData = await prisma.appointment.findUniqueOrThrow({
+        where: {
+            id: appointmentId
+        },
+        include: {
+            doctor: true
+        }
+    });
+
+    if (user?.role === ROLE.DOCTOR) {
+        if (!(user?.email === appointmentData.doctor.email)) {
+            throw new AppError(status.BAD_REQUEST, 'This is not your appointment');
+        }
+    }
+
+    const result = await prisma.appointment.update({
+        where: {
+            id: appointmentId
+        },
+        data: {
+            status: appointmentStatus
+        }
+    });
+    return result;
+}
+
 export const AppointmentService = {
     bookAppointment,
     getMyAppointments,
+    changeAppointmentStatus,
 }
